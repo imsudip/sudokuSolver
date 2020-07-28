@@ -1,36 +1,81 @@
-// var board = [
-//   [7, 8, 0, 4, 0, 0, 1, 2, 0],
-//   [6, 0, 0, 0, 7, 5, 0, 0, 9],
-//   [0, 0, 0, 6, 0, 1, 0, 7, 8],
-//   [0, 0, 7, 0, 4, 0, 2, 6, 0],
-//   [0, 0, 1, 0, 5, 0, 9, 3, 0],
-//   [9, 0, 4, 0, 6, 0, 0, 0, 5],
-//   [0, 7, 0, 3, 0, 0, 0, 1, 2],
-//   [1, 2, 0, 0, 0, 7, 4, 0, 0],
-//   [0, 4, 9, 2, 0, 6, 0, 0, 7]
-// ];
-var board = [[3, 0, 6, 5, 0, 8, 4, 0, 0],
-[5, 2, 0, 0, 0, 0, 0, 0, 0],
-[0, 8, 7, 0, 0, 0, 0, 3, 1],
-[0, 0, 3, 0, 1, 0, 0, 8, 0],
-[9, 0, 0, 8, 6, 3, 0, 0, 5],
-[0, 5, 0, 0, 9, 0, 6, 0, 0],
-[1, 3, 0, 0, 0, 0, 2, 5, 0],
-[0, 0, 0, 0, 0, 0, 0, 7, 4],
-[0, 0, 5, 2, 0, 6, 3, 0, 0]];
+var boards = [
+  [
+    [7, 8, 0, 4, 0, 0, 1, 2, 0],
+    [6, 0, 0, 0, 7, 5, 0, 0, 9],
+    [0, 0, 0, 6, 0, 1, 0, 7, 8],
+    [0, 0, 7, 0, 4, 0, 2, 6, 0],
+    [0, 0, 1, 0, 5, 0, 9, 3, 0],
+    [9, 0, 4, 0, 6, 0, 0, 0, 5],
+    [0, 7, 0, 3, 0, 0, 0, 1, 2],
+    [1, 2, 0, 0, 0, 7, 4, 0, 0],
+    [0, 4, 9, 2, 0, 6, 0, 0, 7]
+  ],
+  [[3, 0, 6, 5, 0, 8, 4, 0, 0],
+  [5, 2, 0, 0, 0, 0, 0, 0, 0],
+  [0, 8, 7, 0, 0, 0, 0, 3, 1],
+  [0, 0, 3, 0, 1, 0, 0, 8, 0],
+  [9, 0, 0, 8, 6, 3, 0, 0, 5],
+  [0, 5, 0, 0, 9, 0, 6, 0, 0],
+  [1, 3, 0, 0, 0, 0, 2, 5, 0],
+  [0, 0, 0, 0, 0, 0, 0, 7, 4],
+  [0, 0, 5, 2, 0, 6, 3, 0, 0]],
+  [
+    [8,6,0,0,2,0,0,0,0],
+    [0,0,0,7,0,0,0,5,9],
+    [7,5,9,4,1,3,2,8,6],
+    [0,0,0,0,6,0,8,0,0],
+    [0,4,0,0,0,0,0,0,0],
+    [0,0,5,3,0,0,0,0,7],
+    [1,9,8,6,3,2,5,7,4],
+    [0,2,0,0,0,0,6,0,0],
+    [0,0,7,5,0,9,0,0,0]
+  ]
+
+]
+
+var board = boards[0];
 var cells = [];
 var w = 50;
 var closeSet = [];
 var startNum = 1;
 var current;
-
+var canStart = false;
+let slider;
+let sliderText;
 function setup() {
-  let myCanvas=createCanvas(550, 550);
+  let myCanvas = createCanvas(550, 550);
   myCanvas.parent("sudokuSolver");
+  slider=createSlider(1, 20, 2, 1);
+  slider.style('width', '150px');
+  slider.addClass("range")
+  slider.addClass("blue")
+  slider.parent("sld");
+  sliderText=document.getElementById("sliderText");
   cells = new Array(9)
   for (i = 0; i < cells.length; i++) {
     cells[i] = new Array(9);
   }
+  startUp()
+  document.getElementById("startBtn").addEventListener("click", toggleStart);
+  document.getElementById("changeBoard").addEventListener("click", changeBoard);
+
+}
+function changeBoard() {
+  let b=random(boards);
+  while(b==board){
+    b=random(boards);
+  }
+    
+  board = b;
+  canStart = false;
+  var btn = document.getElementById("startBtn");
+  if (canStart)
+    btn.innerHTML = "Stop"
+  else
+    btn.innerHTML = "Start"
+  startUp();
+}
+function startUp() {
   for (var i = 0; i < 9; i++) {
     for (var j = 0; j < 9; j++) {
       var val = board[i][j];
@@ -44,52 +89,67 @@ function setup() {
   //print(solve(board))
   let spot = nextSpot();
   current = cells[spot.x][spot.y];
+  //frameRate(5000)
 }
-function start(b){
- if(b) {if (current.val == 0) {
-    if (validate(createVector(current.i, current.j), startNum) & startNum < 10) {
-      current.val = startNum;
-      closeSet.push(current);
+function toggleStart() {
+  canStart = !canStart;
+  var btn = document.getElementById("startBtn");
+  if (canStart)
+    btn.innerHTML = "Stop"
+  else
+    btn.innerHTML = "Start"
+}
+function start(b) {
+  let safety = createVector(8, 8);
+  if (b) {
+    if (current.val == 0) {
+      if (validate(createVector(current.i, current.j), startNum) & startNum < 10) {
+        current.val = startNum;
+        closeSet.push(current);
+        let n = nextSpot();
+        if (n == safety) {
+          noLoop();
+        } else {
+          current = cells[n.x][n.y];
+        }
+        startNum = 0
+      } else {
+        if (startNum > 8) {
+          current.val = 0;
+          current = closeSet.pop();
+          startNum = current.val;
+          current.val = 0;
+        }
+      }
+    } else {
       let n = nextSpot();
       if (n == safety) {
         noLoop();
       } else {
         current = cells[n.x][n.y];
       }
-      startNum = 0
-    } else {
-      if (startNum > 8) {
-        current.val = 0;
-        current = closeSet.pop();
-        startNum = current.val;
-        current.val = 0;
-      }
+      startNum = 0;
     }
-  } else {
-    let n = nextSpot();
-    if (n == safety) {
-      noLoop();
-    } else {
-      current = cells[n.x][n.y];
-    }
-    startNum = 0;
+    startNum++;
   }
-  startNum++;}
 }
 function draw() {
   //frameRate(5)
   background(247, 247, 247);
   translate(50, 50);
-  let safety = createVector(8, 8);
+
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
       //cells[i][j].val=floor(random(1,9));
       cells[i][j].show();
-
-
     }
   }
- 
+  let val= slider.value();
+  sliderText.innerHTML=val+"X";
+  for(let i=0 ;i<val;i++){
+    start(canStart)
+  }
+  
 }
 function nextSpot() {
   for (var i = 0; i < 9; i++) {
@@ -165,11 +225,11 @@ function cell(i, j, val) {
     stroke(0);
     if (i % 3 == 0 && i != 0) {
       strokeWeight(2)
-      line(i * w, j * w, i * w, j * w + w)
+      line(i * w - 2, j * w, i * w - 2, j * w + w)
     }
     if (j % 3 == 0 && j != 0) {
       strokeWeight(2)
-      line(i * w, j * w, i * w + w, j * w)
+      line(i * w, j * w - 2, i * w + w, j * w - 2)
     }
   }
 }
