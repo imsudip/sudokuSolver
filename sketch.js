@@ -23,8 +23,10 @@ var w = 50;
 var closeSet = [];
 var startNum = 1;
 var current;
+
 function setup() {
-  createCanvas(550, 550);
+  let myCanvas=createCanvas(550, 550);
+  myCanvas.parent("sudokuSolver");
   cells = new Array(9)
   for (i = 0; i < cells.length; i++) {
     cells[i] = new Array(9);
@@ -43,20 +45,8 @@ function setup() {
   let spot = nextSpot();
   current = cells[spot.x][spot.y];
 }
-function draw() {
-  //frameRate(5)
-  background(247, 247, 247);
-  translate(50, 50);
-  let safety = createVector(8, 8);
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      //cells[i][j].val=floor(random(1,9));
-      cells[i][j].show();
-
-
-    }
-  }
-  if (current.val == 0) {
+function start(b){
+ if(b) {if (current.val == 0) {
     if (validate(createVector(current.i, current.j), startNum) & startNum < 10) {
       current.val = startNum;
       closeSet.push(current);
@@ -84,7 +74,22 @@ function draw() {
     }
     startNum = 0;
   }
-  startNum++;
+  startNum++;}
+}
+function draw() {
+  //frameRate(5)
+  background(247, 247, 247);
+  translate(50, 50);
+  let safety = createVector(8, 8);
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      //cells[i][j].val=floor(random(1,9));
+      cells[i][j].show();
+
+
+    }
+  }
+ 
 }
 function nextSpot() {
   for (var i = 0; i < 9; i++) {
