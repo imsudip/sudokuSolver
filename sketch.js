@@ -55,7 +55,11 @@ function setup() {
   for (i = 0; i < cells.length; i++) {
     cells[i] = new Array(9);
   }
-  
+  let newBoard= new Array(9);
+  for (i = 0; i < newBoard.length; i++) {
+    newBoard[i] = new Array(9);
+  }
+  generateBoard(newBoard);
   startUp()
   document.getElementById("startBtn").addEventListener("click", toggleStart);
   document.getElementById("changeBoard").addEventListener("click", changeBoard);
