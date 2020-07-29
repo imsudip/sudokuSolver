@@ -55,6 +55,7 @@ function setup() {
   for (i = 0; i < cells.length; i++) {
     cells[i] = new Array(9);
   }
+  
   startUp()
   document.getElementById("startBtn").addEventListener("click", toggleStart);
   document.getElementById("changeBoard").addEventListener("click", changeBoard);
