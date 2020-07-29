@@ -44,7 +44,7 @@ function validateCol(board, colNum, num) {
     }
     return true;
 }
-function removeElements(board,intensity){
+function removeEl(board,intensity){
     let k= intensity*2*9;
     while(k!=0){
         let cellId= floor(random(81));
