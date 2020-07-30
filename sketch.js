@@ -42,7 +42,7 @@ var current;
 var canStart = false;
 let slider;
 let sliderText;
-let newBoard;
+let newBoard=[];
 function setup() {
   let myCanvas = createCanvas(550, 550);
   myCanvas.parent("sudokuSolver");
@@ -56,11 +56,7 @@ function setup() {
   for (i = 0; i < cells.length; i++) {
     cells[i] = new Array(9);
   }
-  newBoard = new Array(9);
-  for (i = 0; i < newBoard.length; i++) {
-    newBoard[i] = new Array(9);
-  }
-  generateBoard(newBoard);
+  //generateBoard(newBoard);
   startUp()
   document.getElementById("startBtn").addEventListener("click", toggleStart);
   document.getElementById("changeBoard").addEventListener("click", changeBoard);
